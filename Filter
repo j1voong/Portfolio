@@ -1,0 +1,152 @@
+void grayscale(int height, int width, RGBTRIPLE image[height][width])
+{
+
+    for(int ct0 = 0; ct0 < height;ct0++){
+        for(int ct1 = 0; ct1 < width;ct1++){
+            int red = image[ct0][ct1].rgbtRed;
+            int green = image[ct0][ct1].rgbtGreen;
+            int blue = image[ct0][ct1].rgbtBlue;
+            int average =  round((red + green + blue)/3);
+            image[ct0][ct1].rgbtRed = average;
+            image[ct0][ct1].rgbtGreen = average;
+            image[ct0][ct1].rgbtBlue = average;
+        }
+    }
+    return;
+}
+
+void edges(int height, int width, RGBTRIPLE image[height][width])
+{
+    void twofifty(double *pointer);
+    int gxgy(double *gx,double *gy);
+    RGBTRIPLE TEMP[height][width];
+
+    for(int ct0 = 0; ct0 < height; ct0++){
+        //printf("ct0:%i\n",ct0);
+        for(int ct1 = 0; ct1 < width; ct1++){
+            //printf("ct1:%i\n",ct1);
+           double gxr = 0;
+           double gxg = 0;
+           double gxb= 0;
+           double gyr = 0;
+           double gyg = 0;
+           double gyb = 0;
+           //int r;
+           //int g;
+           //int b;
+           for(int ct2 = ct0 -1; ct2 <= ct0+1; ct2++){//height
+            //printf("ct2gx:%i\n",ct2);
+            //int comp =0;
+                for(int ct3 = ct1-1; ct3 <= ct1+1; ct3++){//width
+                    //printf("ct3gx:%i\n",ct3);
+                    //GX
+                    //for(int ct4 = -1; ct4 < 2)
+                    //extra why did i do this i did it for a reason
+                        //int comp_dimesional_coding =
+                        if(ct2 < 0 || ct2 > height || ct3 < 0 || ct3 > width){
+                          gxr = gxr + 0 /*(image[ct2][ct3].rgbtRed * 0)*/;
+                          //printf("gxr.1:%f\n",gxr);
+                          gxg = gxg + 0/*(image[ct2][ct3].rgbtGreen * 0)*/;
+                          gxb = gxb + 0/*(image[ct2][ct3].rgbtBlue * 0)*/;
+
+                        }
+                         //gx middle
+                        else if(ct2 < ct0 || ct2 > ct0 ){//comp to get seperate the middle part of sobel operator to skip 2
+                          //for(int ct4 = -1; ct4 < 2;ct4++){
+                            gxr = gxr + (image[ct2][ct3].rgbtRed *(ct3 - ct1));
+                            //printf("gxr.2:%f\n",gxr);
+                            gxg = gxg + (image[ct2][ct3].rgbtGreen * (ct3 - ct1));
+                            gxb = gxb + (image[ct2][ct3].rgbtBlue * (ct3 - ct1));
+                          //}
+                          //new gy
+                        }
+                        //
+                        else if(ct2 == ct0){
+                            //for(int ct5 = -2 ; ct6 < 4 ; ct6 += 2){
+                              gxr = gxr + (image[ct2][ct3].rgbtRed * (2*(ct3-ct1)));
+                              //printf("gxr.3:%f\n",gxr);
+                              gxg = gxg + (image[ct2][ct3].rgbtGreen * (2*(ct3-ct1)));
+                              gxb = gxb + (image[ct2][ct3].rgbtBlue * (2*(ct3-ct1)));
+                            //}
+                        }
+                        //printf("gxr1:%f\n",gxr);
+                //comp++;
+                }
+                //printf("gxr2:%f\n",gxr);
+           }
+           //printf("gxr3:%f\n",gxr);
+           //gxr = sqrt(gxr);
+           //gxg = sqrt(gxg);
+           //gxb = sqrt(gxb);
+           for(int ct3 = ct1 -1 ; ct3 <= ct1 +1; ct3++){//width
+            //printf("ct3gy:%i\n",ct3);
+            //int comp = 0;
+            //int multiply = -1;
+            //int multiply2 = -2;
+                for(int ct4 = ct0 -1; ct4 <= ct0+1;ct4++){//height
+                    //printf("ct4gy:%i\n",ct4);
+                    if(ct3 < 0|| ct3> width||ct4 < 0 || ct4 > height){
+                        gyr = gyr + 0/*(image[ct4][ct3].rgbtRed * 0)*/;
+                        gyg = gyg + 0/*(image[ct4][ct3].rgbtGreen * 0)*/;
+                        gyb = gyb + 0/*(image[ct4][ct3].rgbtBlue * 0)*/;
+                    }
+                    else if(ct3 < ct1 || ct3 > ct1){
+                        gyr = gyr +(image[ct4][ct3].rgbtRed * (ct4 - ct0));
+                        //int test = image[ct4][ct3].rgbtRed;
+                        //printf("gy red:%i\n",test);
+                        gyg = gyg +(image[ct4][ct3].rgbtGreen * (ct4 - ct0));
+                        gyb = gyb +(image[ct4][ct3].rgbtBlue * (ct4 -ct0));
+                    }
+                    else if(ct3 == ct1){
+                        gyr = gyr + (image[ct4][ct3].rgbtRed * (2*(ct4 - ct0)));
+                        gyg = gyg + (image[ct4][ct3].rgbtGreen * (2*(ct4 - ct0)));
+                        gyb = gyb + (image[ct4][ct3].rgbtBlue * (2*(ct4 - ct0)));
+                    }
+                    //multiply++;
+
+                }
+                //comp++;
+            }
+            //gyr = sqrt(gyr);
+            //gyg = sqrt(gyg);
+            //gyb = sqrt(gyb);
+            //printf("gxr:%f\n",gxr);
+            //printf("gyr:%f\n",gyr);
+            int r = gxgy(&gxr,&gyr);
+            int g = gxgy(&gxg,&gyg);
+            int b = gxgy(&gxb,&gyb);
+            TEMP[ct0][ct1].rgbtRed = r;
+            //printf("%i\n",r);
+                        TEMP[ct0][ct1].rgbtGreen = g;
+            TEMP[ct0][ct1].rgbtBlue = b;
+        }
+    }
+    //image = TEMP;
+
+    for(int ct5 = 0; ct5 < height;ct5++){
+        for(ct6 = 0; ct6 < width;ct6++){
+            image[ct5][ct6] = TEMP[ct5][ct6];
+        }
+    }
+    return;
+}
+void twofifty(double *pointer)
+{
+    if(*pointer >255 ){
+        *pointer = 255;
+    }
+    *pointer = round(*pointer);
+}
+int gxgy(double *gx,double *gy)
+{
+    //printf("raw input:%f\n",*gx);
+    *gx = sqrt(*gx);
+    //printf("sqrt gx:%f\n",*gx);
+    *gy = sqrt(*gy);
+    *gx = *gx + *gy;
+    //printf("added:%f\n",*gx);
+    twofifty(gx);
+    //printf("rounded:%f\n",*gx);
+    int temp = *gx;
+    return temp;
+}
